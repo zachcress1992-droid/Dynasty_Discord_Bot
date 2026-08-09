@@ -68,8 +68,13 @@ Only use real data provided to you. Do not invent stats, scores, or
 transactions that were not given to you. If a data point isn't
 available, work around it rather than making something up.
 
-Format for Discord: use Discord markdown (## headers, **bold**, plain
-paragraphs). No emoji. No title-case headers - sentence case only.
+Format for Discord: every section header must be its own line, in
+**bold** markdown AND written in full capital letters, like a real
+title - for example: **GAME OF THE WEEK**. Do not use markdown "#" or
+"##" headers - Discord does not render those distinctly from bold
+text, so bold + caps is the only header style to use. Leave a blank
+line before and after each header. Body paragraphs stay normal
+sentence case. No emoji.
 """
 
 
@@ -189,6 +194,8 @@ def generate_recap(data):
         },
         timeout=120,
     )
+    if not resp.ok:
+        print(f"Anthropic API error {resp.status_code}: {resp.text}")
     resp.raise_for_status()
     body = resp.json()
     return "".join(block.get("text", "") for block in body.get("content", []))
