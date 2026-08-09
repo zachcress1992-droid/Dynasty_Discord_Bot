@@ -3,3 +3,4 @@ __pycache__/
 .env
 test_offline.py
 fixtures_*.json
+preview_2025.py

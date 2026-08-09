@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Basement League — Week 14</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
+
+  :root{
+    --ink:#0B0E13;
+    --panel:#12161D;
+    --field:#132A20;
+    --chalk:#F3F1E8;
+    --steel:#6B7480;
+    --red:#E0333F;
+    --gold:#D6A648;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--ink);color:var(--chalk);font-family:'Oswald',Arial Narrow,sans-serif;}
+
+  /* ---------- Ticker ---------- */
+  .ticker-bar{
+    background:var(--red);
+    color:#fff;
+    overflow:hidden;
+    white-space:nowrap;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:.03em;
+    border-bottom:3px solid #7c1015;
+  }
+  .ticker-track{
+    display:inline-block;
+    padding:7px 0;
+    animation:scroll 32s linear infinite;
+  }
+  .ticker-track span{margin-right:48px;}
+  .ticker-track span b{color:var(--gold);}
+  @keyframes scroll{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    padding:28px 40px 20px;
+    border-bottom:1px solid #22272F;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.16em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Anton',sans-serif;
+    font-size:52px;
+    line-height:.95;
+    margin:0;
+    letter-spacing:.01em;
+    text-transform:uppercase;
+  }
+  .sub{color:var(--steel);font-size:14px;margin-top:8px;font-family:'IBM Plex Mono',monospace;}
+
+  main{max-width:1080px;margin:0 auto;padding:32px 40px 80px;}
+
+  /* ---------- Scoreboard ---------- */
+  .section-label{
+    font-family:'Anton',sans-serif;
+    font-size:15px;
+    letter-spacing:.14em;
+    color:var(--steel);
+    text-transform:uppercase;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{content:'';flex:1;height:1px;background:#22272F;}
+
+  .scoreboard{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    margin-bottom:48px;
+  }
+  .matchup{
+    background:var(--field);
+    border:1px solid #1E3A2C;
+    border-radius:4px;
+    padding:16px 18px;
+    position:relative;
+  }
+  .matchup.closest{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;}
+  .matchup.blowout{border-color:var(--red);}
+  .tag{
+    position:absolute;top:-10px;right:14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;letter-spacing:.1em;
+    padding:2px 8px;border-radius:2px;text-transform:uppercase;
+  }
+  .tag.gold{background:var(--gold);color:#1a1200;}
+  .tag.red{background:var(--red);color:#fff;}
+  .row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;}
+  .row .team{font-size:15px;}
+  .row .team .owner{color:var(--steel);font-size:11px;display:block;font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+  .row .score{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;}
+  .row.win .team, .row.win .score{color:var(--chalk);}
+  .row.loss .team, .row.loss .score{color:var(--steel);}
+  .divider{height:1px;background:#1E3A2C;margin:2px 0;}
+
+  /* ---------- Transactions strip ---------- */
+  .transactions{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:48px;
+  }
+  .txn-card{
+    background:var(--panel);border:1px solid #22272F;border-radius:4px;padding:14px 16px;
+  }
+  .txn-type{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .txn-detail{font-size:14px;line-height:1.4;}
+  .txn-detail .owner{color:var(--steel);font-size:12px;}
+
+  /* ---------- Recap desk ---------- */
+  .byline-grid{display:flex;flex-direction:column;gap:0;}
+  .article{
+    padding:26px 0;border-bottom:1px solid #22272F;
+  }
+  .article:last-child{border-bottom:none;}
+  .article-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:16px;}
+  .article-title{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;line-height:1.05;letter-spacing:.005em;max-width:70%;}
+  .byline{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);text-align:right;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
+  }
+  .byline b{color:var(--gold);display:block;font-size:12px;}
+  .article-body{
+    font-family:'Source Serif 4',Georgia,serif;font-size:17px;line-height:1.65;color:#DCD9CE;
+  }
+  .article-body p{margin:0 0 12px;}
+
+  footer{
+    text-align:center;padding:24px;color:var(--steel);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+  }
+
+  /* ---------- Prospect Watch ---------- */
+  .scouting-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;
+  }
+  .prospect-card{
+    background:var(--panel);border:1px solid #22272F;border-radius:4px;padding:16px 18px;position:relative;
+  }
+  .prospect-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .prospect-name{font-size:17px;font-weight:600;}
+  .prospect-meta{color:var(--steel);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-top:3px;}
+  .prospect-grade{
+    font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--gold);
+    border:1px solid var(--gold);border-radius:3px;padding:2px 8px;
+  }
+  .prospect-stats{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#B9B6AA;margin-bottom:6px;}
+  .prospect-comp{font-size:13px;color:var(--steel);font-style:italic;}
+  .prospect-flag{
+    margin-top:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--red);border-top:1px dashed #2A1418;padding-top:8px;
+  }
+
+  .scout-update{
+    background:#161310;border:1px solid #3A3226;border-left:3px solid var(--red);
+    padding:18px 22px;margin-bottom:48px;border-radius:0 4px 4px 0;
+  }
+  .scout-update-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;
+  }
+  .scout-update p{
+    font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;line-height:1.65;color:#D8D3C4;margin:0 0 10px;
+  }
+  .scout-update p:last-child{margin-bottom:0;}
+
+  @media(max-width:640px){
+    h1{font-size:36px;}
+    .scoreboard,.transactions,.scouting-grid{grid-template-columns:1fr;}
+    .article-title{max-width:100%;}
+    .article-head{flex-direction:column;}
+    .byline{text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span><b>WIRE:</b> Skol Dorks drop Rome Odunze, add Ricky Pearsall off waivers</span>
+    <span><b>TRADE:</b> The Kelce Types send 2027 1st + Puka Nacua to Zero Dark Thirty for DeVonta Smith</span>
+    <span><b>WIRE:</b> Cook County claims Isaiah Davis, cuts Zack Moss</span>
+    <span><b>WEEK 14:</b> 6 games final &middot; avg margin 21.4 pts &middot; high score 168.2 (Skol Dorks)</span>
+    <span><b>WIRE:</b> Skol Dorks drop Rome Odunze, add Ricky Pearsall off waivers</span>
+    <span><b>TRADE:</b> The Kelce Types send 2027 1st + Puka Nacua to Zero Dark Thirty for DeVonta Smith</span>
+    <span><b>WIRE:</b> Cook County claims Isaiah Davis, cuts Zack Moss</span>
+    <span><b>WEEK 14:</b> 6 games final &middot; avg margin 21.4 pts &middot; high score 168.2 (Skol Dorks)</span>
+  </div>
+</div>
+
+<header>
+  <div class="eyebrow">The Basement League &middot; Dynasty Wire</div>
+  <h1>Week 14 Rundown</h1>
+  <div class="sub">6 GAMES FINAL &nbsp;/&nbsp; UPDATED SUN 11:58 PM &nbsp;/&nbsp; SEASON WEEK 14 OF 17</div>
+</header>
+
+<main>
+
+  <div class="section-label">Scoreboard</div>
+  <div class="scoreboard">
+
+    <div class="matchup blowout">
+      <span class="tag red">Blowout</span>
+      <div class="row win"><div class="team">Skol Dorks<span class="owner">@jmartinez</span></div><div class="score">168.2</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">Cook County<span class="owner">@d_torres</span></div><div class="score">96.4</div></div>
+    </div>
+
+    <div class="matchup closest">
+      <span class="tag gold">Nail-biter</span>
+      <div class="row win"><div class="team">Zero Dark Thirty<span class="owner">@finna_win</span></div><div class="score">121.8</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">The Kelce Types<span class="owner">@r_boone</span></div><div class="score">121.1</div></div>
+    </div>
+
+    <div class="matchup">
+      <div class="row win"><div class="team">Sunday Scaries<span class="owner">@kpatel</span></div><div class="score">134.6</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">Thee Stallions<span class="owner">@monica_v</span></div><div class="score">110.2</div></div>
+    </div>
+
+    <div class="matchup">
+      <div class="row win"><div class="team">Injured Reserve<span class="owner">@big_wex</span></div><div class="score">128.9</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">Air Coryell<span class="owner">@nate_g</span></div><div class="score">119.3</div></div>
+    </div>
+
+  </div>
+
+  <div class="section-label">On the Wire</div>
+  <div class="transactions">
+    <div class="txn-card">
+      <div class="txn-type">Trade</div>
+      <div class="txn-detail">The Kelce Types get <b>DeVonta Smith</b><br>Zero Dark Thirty get <b>2027 1st, Puka Nacua</b></div>
+    </div>
+    <div class="txn-card">
+      <div class="txn-type">Waiver Claim</div>
+      <div class="txn-detail">Skol Dorks add <b>Ricky Pearsall</b>, drop Rome Odunze<span class="owner"> &middot; $14 FAAB</span></div>
+    </div>
+    <div class="txn-card">
+      <div class="txn-type">Waiver Claim</div>
+      <div class="txn-detail">Cook County add <b>Isaiah Davis</b>, drop Zack Moss<span class="owner"> &middot; $8 FAAB</span></div>
+    </div>
+    <div class="txn-card">
+      <div class="txn-type">Roster Move</div>
+      <div class="txn-detail">Sunday Scaries activate <b>Trey Whitfield</b> off IR, ahead of playoff push<span class="owner"> &middot; roster limit</span></div>
+    </div>
+  </div>
+
+  <div class="section-label">Prospect Watch &mdash; Rookie Class Radar</div>
+  <div class="scouting-grid">
+
+    <div class="prospect-card">
+      <div class="prospect-top">
+        <div>
+          <div class="prospect-name">Dorian Calloway</div>
+          <div class="prospect-meta">WR &middot; Ashford State &middot; Jr.</div>
+        </div>
+        <div class="prospect-grade">7.8</div>
+      </div>
+      <div class="prospect-stats">4.41 40 &middot; 6'1" 201 lbs &middot; 71 rec, 1,140 yds, 11 TD</div>
+      <div class="prospect-comp">Comp: contested-catch deep threat, high ceiling / high variance</div>
+      <div class="prospect-flag">Ongoing story &mdash; see update below</div>
+    </div>
+
+    <div class="prospect-card">
+      <div class="prospect-top">
+        <div>
+          <div class="prospect-name">Marquis Oyelaran</div>
+          <div class="prospect-meta">RB &middot; Cascade Tech &middot; Sr.</div>
+        </div>
+        <div class="prospect-grade">6.9</div>
+      </div>
+      <div class="prospect-stats">4.52 40 &middot; 5'10" 214 lbs &middot; 1,502 yds, 14 TD</div>
+      <div class="prospect-comp">Comp: early-down grinder, third-down role likely as rookie</div>
+    </div>
+
+    <div class="prospect-card">
+      <div class="prospect-top">
+        <div>
+          <div class="prospect-name">Teo Fairbanks</div>
+          <div class="prospect-meta">QB &middot; Delridge University &middot; Jr.</div>
+        </div>
+        <div class="prospect-grade">7.2</div>
+      </div>
+      <div class="prospect-stats">67% comp &middot; 3,410 yds, 29 TD, 6 INT</div>
+      <div class="prospect-comp">Comp: processor over athlete, needs a scheme that lets him play fast</div>
+    </div>
+
+  </div>
+
+  <div class="scout-update">
+    <div class="scout-update-tag">Scouting Desk Update &middot; Week 14</div>
+    <p>Calloway's tape is still the best of any receiver in this class &mdash; the issue is everything around it. Ashford State benched him for the final two games of the regular season, officially "a coaching decision." Unofficially, campus police confirmed an open report tied to a leased vehicle registered to Calloway that was found 200 miles off campus with body damage no one in the program will explain.</p>
+    <p>None of it shows up in a box score. All of it shows up in a medical/character grade that three teams in our own league's front offices have already started arguing about. Skol Dorks' scouting notes (leaked, allegedly, by <i>someone</i> in that Discord) still have him as a top-three rookie target &mdash; which, given this front office's history of ignoring red flags for ceiling, is either bold or exactly on brand. Cook County has him crossed off the board entirely, which is rich coming from an organization that once traded a first for a kicker.</p>
+    <p>And now this: a gas station attendant two exits from the impound lot reported finding a duffel bag stuffed with what she described as "an unreasonable amount of cash" zip-tied to a shopping cart, abandoned, no note. Local police have declined to connect it to anything. We are absolutely connecting it to something. The morals of somebody in this league's front office come into question yet again.</p>
+    <p>Nothing here is confirmed. All of it is deeply, wonderfully stupid. That's exactly the point &mdash; for him, and for whoever drafts him in April.</p>
+  </div>
+
+  <div class="section-label">From the Desk</div>
+  <div class="byline-grid">
+
+    <div class="article">
+      <div class="article-head">
+        <div class="article-title">Skol Dorks Turn Week 14 Into a Track Meet</div>
+        <div class="byline"><b>The Beat</b>Straight news, no spin</div>
+      </div>
+      <div class="article-body">
+        <p>Skol Dorks put up 168.2 in a rout of Cook County, the largest margin of the week by 26 points. Three players cleared 20 fantasy points, and the win locks a top-two playoff seed with three weeks to play.</p>
+        <p>Cook County countered by claiming Isaiah Davis off waivers, a clear signal they're already looking past this week toward a playoff push of their own.</p>
+      </div>
+    </div>
+
+    <div class="article">
+      <div class="article-head">
+        <div class="article-title">The Trade That Tells You Everything About This League</div>
+        <div class="byline"><b>The Simmons-ish Take</b>Big theory, small evidence, no regrets</div>
+      </div>
+      <div class="article-body">
+        <p>Okay so I need you to walk with me on this one. The Kelce Types just traded DeVonta Smith for a 2027 first, and everyone in the group chat is calling it a punt. I don't think it's a punt. I think it's a Draft Day Fake-Out — you sell low on a name guy, stockpile picks, and then in April you're the team with three firsts pretending you didn't plan this the whole time. We've seen this movie. It never works the way the GM thinks it will, and I love that for them.</p>
+        <p>Meanwhile Zero Dark Thirty needed a one-point escape act against a team that's now openly rebuilding, which is its own little omen. You don't win a title by needing overtime heroics against a team tanking in Week 14. Bold prediction, and I stand by zero of my bold predictions historically: this trade ages like milk by Thanksgiving of next season.</p>
+      </div>
+    </div>
+
+    <div class="article">
+      <div class="article-head">
+        <div class="article-title">week 14 thoughts, mostly unbothered</div>
+        <div class="byline"><b>The Russillo Deadpan</b>Tweet-length, allergic to hype</div>
+      </div>
+      <div class="article-body">
+        <p>skol dorks by 72. cook county's defense treated the flex spot like a personal insult. moving on.</p>
+        <p>zero dark thirty wins by 0.7 and everyone's acting like it was a heist. it was a coin flip that landed the right way. congrats i guess.</p>
+        <p>a team traded their WR1 for a pick that's 14 months away. bold. courageous, even. we'll circle back on this in the offseason when nobody remembers why it happened.</p>
+        <p>isaiah davis got claimed for $8 FAAB and somehow that's the most decisive move anyone made all week.</p>
+      </div>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>THE BASEMENT LEAGUE &middot; POWERED BY SLEEPER API &middot; MOCKUP DATA</footer>
+
+</body>
+</html>

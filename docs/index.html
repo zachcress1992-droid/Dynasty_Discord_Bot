@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Formentera 2025 - RED — Week 17</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap');
+
+  :root{
+    --ink:#0B0E13;
+    --panel:#12161D;
+    --field:#132A20;
+    --chalk:#F3F1E8;
+    --steel:#6B7480;
+    --red:#E0333F;
+    --gold:#D6A648;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;background:var(--ink);color:var(--chalk);font-family:'Oswald',Arial Narrow,sans-serif;}
+
+  .ticker-bar{
+    background:var(--red);
+    color:#fff;
+    overflow:hidden;
+    white-space:nowrap;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    letter-spacing:.03em;
+    border-bottom:3px solid #7c1015;
+  }
+  .ticker-track{
+    display:inline-block;
+    padding:7px 0;
+    animation:scroll 32s linear infinite;
+  }
+  .ticker-track span{margin-right:48px;}
+  .ticker-track span b{color:var(--gold);}
+  @keyframes scroll{
+    0%{transform:translateX(0);}
+    100%{transform:translateX(-50%);}
+  }
+
+  header{
+    padding:28px 40px 20px;
+    border-bottom:1px solid #22272F;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    letter-spacing:.16em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:6px;
+  }
+  h1{
+    font-family:'Anton',sans-serif;
+    font-size:52px;
+    line-height:.95;
+    margin:0;
+    letter-spacing:.01em;
+    text-transform:uppercase;
+  }
+  .sub{color:var(--steel);font-size:14px;margin-top:8px;font-family:'IBM Plex Mono',monospace;}
+
+  main{max-width:1080px;margin:0 auto;padding:32px 40px 80px;}
+
+  .section-label{
+    font-family:'Anton',sans-serif;
+    font-size:15px;
+    letter-spacing:.14em;
+    color:var(--steel);
+    text-transform:uppercase;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .section-label::after{content:'';flex:1;height:1px;background:#22272F;}
+
+  .scoreboard{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:14px;
+    margin-bottom:48px;
+  }
+  .matchup{
+    background:var(--field);
+    border:1px solid #1E3A2C;
+    border-radius:4px;
+    padding:16px 18px;
+    position:relative;
+  }
+  .matchup.closest{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset;}
+  .matchup.blowout{border-color:var(--red);}
+  .tag{
+    position:absolute;top:-10px;right:14px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;letter-spacing:.1em;
+    padding:2px 8px;border-radius:2px;text-transform:uppercase;
+  }
+  .tag.gold{background:var(--gold);color:#1a1200;}
+  .tag.red{background:var(--red);color:#fff;}
+  .row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;}
+  .row .team{font-size:15px;}
+  .row .team .owner{color:var(--steel);font-size:11px;display:block;font-family:'IBM Plex Mono',monospace;margin-top:2px;}
+  .row .score{font-family:'IBM Plex Mono',monospace;font-size:24px;font-weight:600;}
+  .row.win .team, .row.win .score{color:var(--chalk);}
+  .row.loss .team, .row.loss .score{color:var(--steel);}
+  .divider{height:1px;background:#1E3A2C;margin:2px 0;}
+
+  .transactions{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:48px;
+  }
+  .txn-card{
+    background:var(--panel);border:1px solid #22272F;border-radius:4px;padding:14px 16px;
+  }
+  .txn-type{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+  .txn-detail{font-size:14px;line-height:1.4;}
+  .txn-detail b{color:var(--chalk);}
+  .txn-detail .owner{color:var(--steel);font-size:12px;}
+
+  .byline-grid{display:flex;flex-direction:column;gap:0;}
+  .article{
+    padding:26px 0;border-bottom:1px solid #22272F;
+  }
+  .article:last-child{border-bottom:none;}
+  .article-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:16px;}
+  .article-title{font-family:'Anton',sans-serif;font-size:24px;text-transform:uppercase;line-height:1.05;letter-spacing:.005em;max-width:70%;}
+  .byline{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--steel);text-align:right;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;
+  }
+  .byline b{color:var(--gold);display:block;font-size:12px;}
+  .article-body{
+    font-family:'Source Serif 4',Georgia,serif;font-size:17px;line-height:1.65;color:#DCD9CE;
+  }
+  .article-body p{margin:0 0 12px;}
+
+  footer{
+    text-align:center;padding:24px;color:var(--steel);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.08em;
+  }
+
+  .scouting-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;
+  }
+  .prospect-card{
+    background:var(--panel);border:1px solid #22272F;border-radius:4px;padding:16px 18px;position:relative;
+  }
+  .prospect-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+  .prospect-name{font-size:17px;font-weight:600;}
+  .prospect-meta{color:var(--steel);font-size:11px;font-family:'IBM Plex Mono',monospace;margin-top:3px;}
+  .prospect-grade{
+    font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;color:var(--gold);
+    border:1px solid var(--gold);border-radius:3px;padding:2px 8px;
+  }
+  .prospect-stats{font-family:'IBM Plex Mono',monospace;font-size:12px;color:#B9B6AA;margin-bottom:6px;}
+  .prospect-comp{font-size:13px;color:var(--steel);font-style:italic;}
+
+  .scout-update{
+    background:#161310;border:1px solid #3A3226;border-left:3px solid var(--red);
+    padding:18px 22px;margin-bottom:48px;border-radius:0 4px 4px 0;
+  }
+  .scout-update-tag{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;
+  }
+  .scout-update p{
+    font-family:'Source Serif 4',Georgia,serif;font-size:15.5px;line-height:1.65;color:#D8D3C4;margin:0 0 10px;
+  }
+  .scout-update p:last-child{margin-bottom:0;}
+
+  @media(max-width:640px){
+    h1{font-size:36px;}
+    .scoreboard,.transactions,.scouting-grid{grid-template-columns:1fr;}
+    .article-title{max-width:100%;}
+    .article-head{flex-direction:column;}
+    .byline{text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ticker-bar">
+  <div class="ticker-track">
+    <span><b>WEEK 17:</b> 6 games final · high score 151.7 (zachcress)</span>
+    <span><b>WEEK 17:</b> 6 games final · high score 151.7 (zachcress)</span>
+  </div>
+</div>
+
+<header>
+  <div class="eyebrow">Formentera 2025 - RED &middot; Dynasty Wire</div>
+  <h1>Week 17 Rundown</h1>
+  <div class="sub">6 GAMES FINAL &nbsp;/&nbsp; UPDATED Sun 7:36 PM UTC &nbsp;/&nbsp; SEASON WEEK 17 OF 17</div>
+</header>
+
+<main>
+
+  <div class="section-label">Scoreboard</div>
+  <div class="scoreboard">
+    
+    <div class="matchup">
+      
+      <div class="row loss"><div class="team">AMPLETakeaways<span class="owner">@AMPLETakeaways</span></div><div class="score">53.58</div></div>
+      <div class="divider"></div>
+      <div class="row win"><div class="team">walthorton13<span class="owner">@walthorton13</span></div><div class="score">63.73</div></div>
+    </div>
+    
+    <div class="matchup">
+      
+      <div class="row win"><div class="team">zachcress<span class="owner">@zachlunch</span></div><div class="score">151.7</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">robstoveratx<span class="owner">@robstoveratx</span></div><div class="score">135.42</div></div>
+    </div>
+    
+    <div class="matchup">
+      
+      <div class="row win"><div class="team">Liquor &amp; Guessing<span class="owner">@Austen81</span></div><div class="score">93.35</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">plecorgne<span class="owner">@plecorgne</span></div><div class="score">83.1</div></div>
+    </div>
+    
+    <div class="matchup">
+      
+      <div class="row loss"><div class="team">Pearsall TE Spacing Test <span class="owner">@cdharrelliii</span></div><div class="score">102.82</div></div>
+      <div class="divider"></div>
+      <div class="row win"><div class="team">gobrigorgohome<span class="owner">@gobrigorgohome</span></div><div class="score">116.0</div></div>
+    </div>
+    
+    <div class="matchup closest">
+      <span class="tag gold">Nail-biter</span>
+      <div class="row win"><div class="team">NickHarper11<span class="owner">@NickHarper11</span></div><div class="score">79.4</div></div>
+      <div class="divider"></div>
+      <div class="row loss"><div class="team">B2LONDON<span class="owner">@B2LONDON</span></div><div class="score">76.38</div></div>
+    </div>
+    
+    <div class="matchup blowout">
+      <span class="tag red">Blowout</span>
+      <div class="row loss"><div class="team">nickterech<span class="owner">@nickterech</span></div><div class="score">98.92</div></div>
+      <div class="divider"></div>
+      <div class="row win"><div class="team">RyanKelly6<span class="owner">@RyanKelly6</span></div><div class="score">146.49</div></div>
+    </div>
+    
+  </div>
+
+  <div class="section-label">On the Wire</div>
+  <div class="transactions">
+    
+    <div class="txn-card">
+      <div class="txn-type">Waiver Activity</div>
+      <div class="txn-detail">
+        
+          robstoveratx: 6 separate add/drop moves during championship week - full panic mode from a team that had already clinched the 1-seed
+        
+      </div>
+    </div>
+    
+    <div class="txn-card">
+      <div class="txn-type">Waiver Activity</div>
+      <div class="txn-detail">
+        
+          zachcress: one clean add/drop all week, then walked away with the title
+        
+      </div>
+    </div>
+    
+  </div>
+
+  <div class="section-label">Prospect Watch &mdash; Rookie Class Radar</div>
+  <div class="scouting-grid">
+    
+    <div class="prospect-card">
+      <div class="prospect-top">
+        <div>
+          <div class="prospect-name">Dorian Calloway</div>
+          <div class="prospect-meta">WR &middot; Ashford State, Jr.</div>
+        </div>
+        <div class="prospect-grade">7.8</div>
+      </div>
+      <div class="prospect-stats">4.41 40 · 6&#39;1&#34; 201 lbs · 71 rec, 1,140 yds, 11 TD</div>
+      <div class="prospect-comp">Comp: contested-catch deep threat, high ceiling / high variance</div>
+    </div>
+    
+    <div class="prospect-card">
+      <div class="prospect-top">
+        <div>
+          <div class="prospect-name">Marquis Oyelaran</div>
+          <div class="prospect-meta">RB &middot; Cascade Tech, Sr.</div>
+        </div>
+        <div class="prospect-grade">6.9</div>
+      </div>
+      <div class="prospect-stats">4.52 40 · 5&#39;10&#34; 214 lbs · 1,502 yds, 14 TD</div>
+      <div class="prospect-comp">Comp: early-down grinder, third-down role likely as a rookie</div>
+    </div>
+    
+    <div class="prospect-card">
+      <div class="prospect-top">
+        <div>
+          <div class="prospect-name">Teo Fairbanks</div>
+          <div class="prospect-meta">QB &middot; Delridge University, Jr.</div>
+        </div>
+        <div class="prospect-grade">7.2</div>
+      </div>
+      <div class="prospect-stats">67% comp · 3,410 yds, 29 TD, 6 INT</div>
+      <div class="prospect-comp">Comp: processor over athlete, needs a scheme that lets him play fast</div>
+    </div>
+    
+  </div>
+
+  <div class="scout-update">
+    <div class="scout-update-tag">Scouting Desk Update - Week 17</div>
+    <p>Filed from the desk of our league&#39;s least trustworthy scout. Subject: the presumptive TE1 target for walthorton13&#39;s organization heading into next year&#39;s rookie class.</p><p>Sources close to the building - by which we mean the box score - describe an organization that has fully lost the locker room. A 6-22 season, a 63.73-point finale in a win, and a front office reportedly &#39;still figuring out the waiver wire&#39; as late as Week 17.</p><p>Scouts are split on whether the culture problem is talent-related or a front-office issue. The box score suggests it&#39;s the latter. Grade: organizational rebuild required.</p>
+  </div>
+
+  <div class="section-label">From the Desk</div>
+  <div class="byline-grid">
+    
+    <div class="article">
+      <div class="article-head">
+        <div class="article-title">ZachCress Wins It All In a Rout</div>
+        <div class="byline"><b>The Beat</b>Straight news, no spin</div>
+      </div>
+      <div class="article-body">
+        <p>ZachCress closed the 2025 season with a 151.70-135.42 win over robstoveratx to take the title, capping a run that looked shaky as late as October.</p><p>robstoveratx finishes the year 21-7 with a league-best 1970.13 points for, the best regular season resume in Formentera 2025 - RED, but the trophy goes home with someone else.</p><p>In the third-place game, RyanKelly6 handled nickterech 146.49-98.92. In the closest matchup of championship week, NickHarper11 held off B2LONDON 79.40-76.38.</p>
+      </div>
+    </div>
+    
+    <div class="article">
+      <div class="article-head">
+        <div class="article-title">The Best Team Lost, And That&#39;s the Whole Sport</div>
+        <div class="byline"><b>The Simmons-ish Take</b>Big theory, small evidence, no regrets</div>
+      </div>
+      <div class="article-body">
+        <p>Let&#39;s start with the sentence I did not expect to type back in October when ZachCress was scuffling around .500: he&#39;s your champion. 151.70 points, a beatdown of robstoveratx&#39;s 135.42, and somewhere a waiver-wire guy is telling anyone who&#39;ll listen that he &#39;saw this coming.&#39; He didn&#39;t. Nobody did. That&#39;s the whole sport.</p><p>robstoveratx has to sit with this one for a while - 21-7 on the year, the best regular-season resume in the league, 1970 points for, more than anyone else by a mile, and it means nothing now. Ruthless.</p><p>And can we talk about Pearsall TE Spacing Test for a second? cdharrelliii&#39;s team name has been funnier than most of the football played in this league all year, and they finished 18-10 with 1737 points - a quietly great season buried under a bit so good it should be studied.</p><p>Meanwhile NickHarper11 survived championship week by 3.02 points while starting two guys who combined to score a flat zero. That&#39;s not a title run, that&#39;s a coin flip that landed the right way. Congrats, I guess.</p>
+      </div>
+    </div>
+    
+    <div class="article">
+      <div class="article-head">
+        <div class="article-title">week 17 thoughts, mostly unbothered</div>
+        <div class="byline"><b>The Deadpan</b>Tweet-length, allergic to hype</div>
+      </div>
+      <div class="article-body">
+        <p>best regular season team in the league loses the championship. cool sport, cool sport.</p><p>robstoveratx made six waiver moves during championship week despite already clinching the one seed. nothing says quietly terrified like touching your bench when it doesn&#39;t matter.</p><p>zachcress made one move all week and won the title. sometimes the lesson is stop touching the roster.</p><p>walthorton13 finishes 6-22. see: scouting report, below. full rebuild is the only responsible plan.</p>
+      </div>
+    </div>
+    
+  </div>
+
+</main>
+
+<footer>FORMENTERA 2025 - RED &middot; POWERED BY SLEEPER API &middot; WEEK 17 FINAL</footer>
+
+</body>
+</html>
