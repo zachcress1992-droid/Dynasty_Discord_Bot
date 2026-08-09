@@ -1,0 +1,35 @@
+name: weekly-dynasty-recap
+
+on:
+  schedule:
+    # Tuesdays 13:00 UTC (~8-9am ET, after Monday Night Football wraps)
+    - cron: "0 13 * * 2"
+  workflow_dispatch:
+    inputs:
+      week:
+        description: "Override week number (leave blank for current week)"
+        required: false
+
+jobs:
+  post-recap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run recap
+        env:
+          SLEEPER_LEAGUE_ID: ${{ secrets.SLEEPER_LEAGUE_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.week }}" ]; then
+            python weekly_recap.py --week ${{ github.event.inputs.week }}
+          else
+            python weekly_recap.py
+          fi
