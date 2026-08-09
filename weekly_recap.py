@@ -53,10 +53,26 @@ roasted. Profanity is allowed and encouraged where it lands naturally
 emphasis, not as a crutch, and never direct slurs or attacks on
 anything other than fantasy football performance.
 
-Only use the real matchup, standings, and transaction data given to
-you. Do not invent stats or scores. The "prospects" section is the one
-exception: those are fictional/satirical dynasty rookie prospects you
-invent for comedic effect, clearly not real players.
+Only use the real matchup, standings, transaction, and individual
+player performance data given to you. Do not invent stats or scores.
+Real, rostered players may be named by their real name in "The Beat",
+"The Simmons-ish Take", and "The Deadpan" - these three articles are
+factual sports commentary, so calling out a real player's real
+performance (a monster week, a bench-worthy dud, a bad start/sit call)
+is fair game and encouraged.
+
+The "prospects" and "scouting_update" sections are the one exception -
+those are fictional/satirical dynasty rookie prospects, not real
+players. You will be given a short list of real rostered players as
+"name inspiration" for this bit only. Invent an original fictional
+prospect whose name is a lightly disguised variant of one of those
+real names - close enough to be a fun wink, clearly different enough
+that it is not the real name (example: "Josh Allen" -> "Josh Ballen",
+"Justin Jefferson" -> "Justin Jeffersen"). Never use a real player's
+name verbatim inside the prospects or scouting_update sections, and
+never claim or imply the invented prospect IS that real player -
+everything about the prospect's stats, school, and backstory must be
+made up.
 
 You must respond with ONLY a single valid JSON object (no markdown
 fences, no commentary before or after) matching exactly this shape:
@@ -161,16 +177,31 @@ def gather_week_data(league_id, week, players):
     def player_name(pid):
         return players.get(pid, pid)
 
+    def best_worst_starter(entry):
+        starters = entry.get("starters") or []
+        pts = entry.get("starters_points") or []
+        pairs = [(sid, p) for sid, p in zip(starters, pts) if sid and sid != "0"]
+        if not pairs:
+            return None, None
+        best_id, best_pts = max(pairs, key=lambda p: p[1])
+        worst_id, worst_pts = min(pairs, key=lambda p: p[1])
+        best = {"name": player_name(best_id), "points": round(best_pts, 2)}
+        worst = {"name": player_name(worst_id), "points": round(worst_pts, 2)}
+        return best, worst
+
     pairs = {}
     for m in matchups:
         mid = m.get("matchup_id")
         pairs.setdefault(mid, []).append(m)
 
     games = []
+    performances = []
     for mid, entries in pairs.items():
         if len(entries) != 2:
             continue
         a, b = entries
+        best_a, worst_a = best_worst_starter(a)
+        best_b, worst_b = best_worst_starter(b)
         games.append({
             "team_a": team_name(a["roster_id"]),
             "owner_a": owner_handle(a["roster_id"]),
@@ -180,6 +211,14 @@ def gather_week_data(league_id, week, players):
             "score_b": b.get("points", 0),
             "margin": round(abs((a.get("points") or 0) - (b.get("points") or 0)), 2),
         })
+        for team, best, worst in ((team_name(a["roster_id"]), best_a, worst_a),
+                                   (team_name(b["roster_id"]), best_b, worst_b)):
+            if best:
+                performances.append({"team": team, "player": best["name"], "points": best["points"], "role": "top scorer"})
+            if worst:
+                performances.append({"team": team, "player": worst["name"], "points": worst["points"], "role": "worst starter"})
+
+    performances.sort(key=lambda p: -p["points"])
 
     if games:
         blowout = max(games, key=lambda g: g["margin"])
@@ -256,6 +295,7 @@ def gather_week_data(league_id, week, players):
         "standings": standings,
         "transactions": transactions,
         "high_score_game": high_score_game,
+        "performances": performances,
     }
 
 
@@ -301,9 +341,21 @@ def build_content_prompt(data):
     else:
         lines.append("Transactions this week: none")
     lines.append("")
+    if data["performances"]:
+        lines.append("Notable individual player performances this week (real names - fine to use verbatim in The Beat / Simmons-ish Take / Deadpan):")
+        for p in data["performances"][:6]:
+            lines.append(f"- {p['player']} ({p['team']}) - {p['points']} pts, {p['role']}")
+    lines.append("")
     lines.append("Real team names in this league (use these verbatim, do not invent teams):")
     for s in data["standings"]:
         lines.append(f"- {s['team']}")
+    lines.append("")
+    if data["performances"]:
+        seed_names = [p["player"] for p in data["performances"][:8]]
+        lines.append("Name-inspiration pool for the fictional prospects/scouting_update ONLY "
+                      "(pick one, disguise the name, never use verbatim - see system instructions):")
+        for n in seed_names:
+            lines.append(f"- {n}")
     return "\n".join(lines)
 
 
