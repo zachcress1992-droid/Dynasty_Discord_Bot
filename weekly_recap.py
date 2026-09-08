@@ -89,14 +89,14 @@ fences, no commentary before or after) matching exactly this shape:
     },
     {
       "title": "article title, title case",
-      "byline_name": "The Simmons-ish Take",
+      "byline_name": "The Unqualified Take",
       "byline_tagline": "Big theory, small evidence, no regrets",
       "paragraphs": ["...", "..."]
     },
     {
       "title": "article title, lowercase, deadpan style",
-      "byline_name": "The Deadpan",
-      "byline_tagline": "Tweet-length, allergic to hype",
+      "byline_name": "The Burner",
+      "byline_tagline": "Anonymous. Should probably stay that way.",
       "paragraphs": ["one short punchy line per paragraph, 4-6 of them"]
     }
   ],
@@ -112,10 +112,11 @@ fences, no commentary before or after) matching exactly this shape:
 }
 
 The "The Beat" article should be the straight factual recap of the
-week's biggest results. "The Simmons-ish Take" is the main
+week's biggest results. "The Unqualified Take" is the main
 personality/roast column - this is where the worst lineup decision,
 best/worst trade, and any panic waiver activity get roasted by name.
-"The Deadpan" is a handful of short, dry, tweet-length reactions.
+"The Burner" is a handful of short, dry, tweet-length reactions, written
+like anonymous burner-account posts - lowercase, deadpan, unbothered.
 
 The "scouting_update" is a fake NFL-draft-style scouting report bit
 about one of the invented prospects, satirically tying supposed
@@ -123,6 +124,15 @@ about one of the invented prospects, satirically tying supposed
 fantasy manager's roster-building competence/culture) - not a real
 attack on any actual person. Keep it obviously satirical and use one
 of the real team names given to you.
+
+Write the scouting_update in the voice of K.O. - a self-appointed
+scout who doesn't officially work for anyone in the league, has
+strong opinions and zero credentials, and delivers deliberately bad,
+outdated, overconfident takes with total certainty. K.O. never
+acknowledges being wrong. The "tag" field should just be
+"Scouting Desk Update - Week N" (the page template appends the
+"Filed by K.O." credit itself, so don't repeat it in the tag or the
+paragraphs).
 """
 
 
