@@ -1,0 +1,38 @@
+name: Post Season Preview to Discord
+
+on:
+  workflow_dispatch:
+
+jobs:
+  post-to-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord webhook message
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PAGES_URL: ${{ secrets.PAGES_URL }}
+        run: |
+          python3 - <<'EOF'
+          import json
+          import os
+          import urllib.request
+
+          page_url = os.environ["PAGES_URL"].rstrip("/") + "/preview.html"
+          headline = "SEASON PREVIEW: TWELVE TEAMS, ONE REBRAND, ZERO GAMES PLAYED"
+          teaser = (
+              "¡Hola y bienvenidos! Me llamo Ricky Martin, and this league is "
+              "officially mine to run. Rosters are locked, the lottery's been drawn, "
+              "and Dr. Fumbles already owes the league an explanation. Twelve owners, "
+              "one fake rookie class, and more than enough smoke to get us to Week 1."
+          )
+          content = f"**{headline}**\n\n{teaser}\n\nFull rundown: {page_url}"
+
+          req = urllib.request.Request(
+              os.environ["DISCORD_WEBHOOK_URL"],
+              data=json.dumps({"content": content}).encode("utf-8"),
+              headers={"Content-Type": "application/json"},
+              method="POST",
+          )
+          with urllib.request.urlopen(req) as resp:
+              print("Discord responded:", resp.status)
+          EOF
