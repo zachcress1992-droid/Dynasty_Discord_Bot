@@ -147,6 +147,13 @@ def get_current_week():
     return state["week"]
 
 
+def get_recap_week():
+    """The week to recap by default. Sleeper's /state/nfl `week` already
+    advances to the upcoming week as soon as Monday Night Football wraps,
+    so on our Tuesday run it's one ahead of the week that actually needs
+    recapping. Floor at 1 since there's no week 0."""
+    return max(get_current_week() - 1, 1)
+
 def get_players():
     """Full Sleeper player dump, id -> display name (includes DEF entries)."""
     raw = sleeper_get("/players/nfl")
@@ -465,7 +472,7 @@ def main():
     league_id = os.environ["SLEEPER_LEAGUE_ID"]
     webhook_url = os.environ["DISCORD_WEBHOOK_URL"]
     page_url = os.environ.get("PAGES_URL", "").rstrip("/") + "/"
-    week = args.week or get_current_week()
+    week = args.week or get_recap_week()
 
     print("Fetching player database...")
     players = get_players()
