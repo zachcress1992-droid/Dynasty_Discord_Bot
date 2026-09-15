@@ -3,7 +3,7 @@ name: weekly-dynasty-recap
 on:
   schedule:
     # Tuesdays 13:00 UTC (~8-9am ET, after Monday Night Football wraps)
-    - cron: "0 13 * * 2"
+    - cron: "7 13 * * 2"
   workflow_dispatch:
     inputs:
       week:
