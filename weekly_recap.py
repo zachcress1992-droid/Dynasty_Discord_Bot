@@ -26,6 +26,7 @@ import json
 import os
 import re
 import sys
+import time
 from datetime import datetime, timezone
 
 import requests
@@ -136,10 +137,22 @@ paragraphs).
 """
 
 
-def sleeper_get(path):
-    resp = requests.get(f"{SLEEPER_BASE}{path}", timeout=20)
-    resp.raise_for_status()
-    return resp.json()
+def sleeper_get(path, max_attempts=3):
+    last_error = None
+    for attempt in range(1, max_attempts + 1):
+        try:
+            resp = requests.get(f"{SLEEPER_BASE}{path}", timeout=30)
+            resp.raise_for_status()
+            return resp.json()
+        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout) as e:
+            last_error = e
+            if attempt < max_attempts:
+                wait = 2 ** attempt
+                print(f"Sleeper API request to {path} failed (attempt {attempt}/{max_attempts}): {e} - retrying in {wait}s...")
+                time.sleep(wait)
+            else:
+                print(f"Sleeper API request to {path} failed after {max_attempts} attempts: {e}")
+    raise last_error
 
 
 def get_current_week():
