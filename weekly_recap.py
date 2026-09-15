@@ -392,10 +392,25 @@ def call_claude(system_prompt, user_prompt, max_tokens=4000):
     return "".join(block.get("text", "") for block in body.get("content", []))
 
 
-def generate_content(data):
-    raw = call_claude(CONTENT_STYLE_GUIDE, build_content_prompt(data))
-    cleaned = re.sub(r"^```(json)?|```$", "", raw.strip(), flags=re.MULTILINE).strip()
-    return json.loads(cleaned)
+def generate_content(data, max_attempts=3):
+    last_error = None
+    last_raw = None
+    for attempt in range(1, max_attempts + 1):
+        raw = call_claude(CONTENT_STYLE_GUIDE, build_content_prompt(data), max_tokens=6000)
+        cleaned = re.sub(r"^```(json)?|```$", "", raw.strip(), flags=re.MULTILINE).strip()
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError as e:
+            last_error = e
+            last_raw = cleaned
+            if attempt < max_attempts:
+                print(f"Content generation attempt {attempt}/{max_attempts} returned invalid JSON ({e}) - retrying...")
+            else:
+                print(f"Content generation failed after {max_attempts} attempts ({e}).")
+    print("---- raw response that failed to parse ----")
+    print(last_raw)
+    print("---- end raw response ----")
+    raise last_error
 
 
 def render_html(data, content):
@@ -427,11 +442,18 @@ def write_page(html):
 
 def build_discord_message(content, page_url):
     headline = content["headline"].upper()
-    return f"**{headline}**\n\n{content['teaser']}\n\nFull rundown: {page_url}"
+    return f"@everyone\n\n**{headline}**\n\n{content['teaser']}\n\nFull rundown: {page_url}"
 
 
 def post_to_discord(webhook_url, text):
-    resp = requests.post(webhook_url, json={"content": text}, timeout=20)
+    resp = requests.post(
+        webhook_url,
+        json={
+            "content": text,
+            "allowed_mentions": {"parse": ["everyone"]},
+        },
+        timeout=20,
+    )
     resp.raise_for_status()
 
 
